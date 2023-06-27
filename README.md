@@ -13,4 +13,4 @@
 
 **GitHub Pages**
 
-- [Ссылка на репозиторий в Pages](https://randychebro.github.io/express-mesto-gha/)
+- [Ссылка на репозиторий в Pages](https://github.com/RandyCheBro/express-mesto-gha)

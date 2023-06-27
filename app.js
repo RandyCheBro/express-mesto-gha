@@ -6,6 +6,7 @@ const app = express();
 
 const userRoutes = require('./routes/userRoutes');
 const cardRoutes = require('./routes/cardRoutes');
+const NotFound = require('./errors/NotFound');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -20,6 +21,10 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
+
+app.use('*', () => {
+  throw new NotFound('Некорректный маршрут');
+});
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
