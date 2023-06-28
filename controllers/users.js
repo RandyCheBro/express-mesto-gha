@@ -20,11 +20,9 @@ const createUser = (req, res, next) => {
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(200).send(users);
+      res.send(users);
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getUser = (req, res, next) => {

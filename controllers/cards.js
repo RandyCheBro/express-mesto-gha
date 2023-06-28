@@ -23,9 +23,7 @@ const getCards = (req, res, next) => {
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const deleteCard = (req, res, next) => {
@@ -38,7 +36,7 @@ const deleteCard = (req, res, next) => {
       res.status(200).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequest(`Ошибка ${err.name}, Переданы некорректные данные для удаления карточки.`));
       } else {
         next(err);
@@ -55,7 +53,7 @@ const addLike = (req, res, next) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequest(`Ошибка ${err.name}, Переданы некорректные данные для постановки лайка.`));
       } else {
         next(err);
@@ -72,7 +70,7 @@ const deleteLike = (req, res, next) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequest(`Ошибка ${err.name}, Переданы некорректные данные для снятия лайка.`));
       } else {
         next(err);
