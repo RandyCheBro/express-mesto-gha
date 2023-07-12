@@ -101,8 +101,13 @@ const createUser = (req, res, next) => {
         about,
         email,
         password: hash,
-      }).then((user) => {
-        res.send(user);
+      }).then(() => {
+        res.status(200).send({
+          name,
+          avatar,
+          about,
+          email,
+        });
       })
         // eslint-disable-next-line consistent-return
         .catch((err) => {
