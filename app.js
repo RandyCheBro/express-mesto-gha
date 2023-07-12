@@ -1,30 +1,46 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const app = express();
 
 const userRoutes = require('./routes/userRoutes');
 const cardRoutes = require('./routes/cardRoutes');
 const NotFound = require('./errors/NotFound');
+const auth = require('./middlewares/auth');
+const { createUser, login } = require('./controllers/users');
+const { linkRegex } = require('./utils/constants');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '6498e8f4d396dfb7273f27a6',
-  };
-
-  next();
-});
-
 app.use(bodyParser.json());
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+  }),
+}), login);
+
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(linkRegex),
+    about: Joi.string().min(2).max(30),
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+  }),
+}), createUser);
+
+app.use(auth);
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
 
 app.use('*', () => {
   throw new NotFound('Некорректный маршрут');
 });
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;

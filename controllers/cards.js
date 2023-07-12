@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFound');
+const Forbidden = require('../errors/Forbidden');
 
 const createCard = (req, res, next) => {
   const owner = req.user._id;
@@ -28,12 +29,22 @@ const getCards = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
+  const owner = req.user._id;
+  console.log(cardId);
+  console.log(owner);
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         throw new NotFound(`Ошибка ${NotFound.name},Карточка с указанным _id не найдена.`);
       }
-      res.status(200).send({ message: 'Карточка удалена' });
+      if (!card.owner.equals(owner)) {
+        throw new Forbidden(`Ошибка ${Forbidden.name},Нет прав для удаления чужой карточки.`);
+      }
+      return Card.findByIdAndRemove(cardId)
+        .then(() => {
+          res.status(200).send({ message: 'Карточка удалена' });
+        })
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
