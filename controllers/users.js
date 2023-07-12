@@ -106,13 +106,6 @@ const createUser = (req, res, next) => {
       })
         // eslint-disable-next-line consistent-return
         .catch((err) => {
-          if (err.name === 'ValidationError') {
-            return next(
-              new BadRequest(
-                `Ошибка ${err.name}, Переданы некорректные данные при создании пользователя.`,
-              ),
-            );
-          }
           if (err.code === 11000) {
             return next(
               new Conflict(
