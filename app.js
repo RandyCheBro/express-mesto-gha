@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -12,7 +13,8 @@ const auth = require('./middlewares/auth');
 const { createUser, login } = require('./controllers/users');
 const { linkRegex } = require('./utils/constants');
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+const { PORT = 3000, MONGOOSE_CONNECT = 'mongodb://localhost:27017/mestodb' } = process.env;
+mongoose.connect(MONGOOSE_CONNECT);
 
 app.use(bodyParser.json());
 app.post('/signin', celebrate({
@@ -45,12 +47,12 @@ app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({
-    message: statusCode === 500 ? 'Ошибка сервера' : message,
+    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
   });
   console.log(`${err.statusCode} ${err.name}`);
   next();
 });
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log('Сервер запущен');
 });
