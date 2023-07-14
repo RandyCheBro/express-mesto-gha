@@ -4,7 +4,7 @@ const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFound');
 const Conflict = require('../errors/Conflict');
-const jwtSecret = require('../utils/constants');
+const { jwtSecret } = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
   User.find({})
